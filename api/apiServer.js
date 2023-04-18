@@ -22,6 +22,10 @@ module.exports = function apiServer(port) {
         next();
     });
 
+    app.get("./test", function (_req, res) {
+        res.json({ Bajs: ["Jepp"] });
+    });
+
     app.listen(port, function () {
         console.log(`Server listening on port ${port}`);
     });
