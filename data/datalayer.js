@@ -24,13 +24,19 @@ class Users {
     }
 
     /**
+     * @param {User[]} parsedData
+     */
+    writeToFile(parsedData) {
+        fs.writeFileSync(file, JSON.stringify(parsedData));
+    }
+
+    /**
      * @param {Number} id
-     * @param {User[]} rawData
+     * @param {User[]} parsedData
      * @returns {Number}
      */
-    getIndexById(id, rawData) {
-        console.log(`id is ${id}`);
-        const index = rawData.findIndex((user) => {
+    getIndexById(id, parsedData) {
+        const index = parsedData.findIndex((user) => {
             return user.id == id;
         });
 
@@ -46,8 +52,8 @@ class Users {
      * @returns {Number}
      */
     getNewId() {
-        const rawData = this.getAllUsers();
-        return rawData[length - 1].id + 1;
+        const parsedData = this.getAllUsers();
+        return parsedData[length - 1].id + 1;
     }
 
     /**
@@ -57,10 +63,10 @@ class Users {
         user.id = getNewId();
         user.created_at = new Date().toISOString();
 
-        let rawData = this.getAllUsers();
-        rawData.push(user);
+        let parsedData = this.getAllUsers();
+        parsedData.push(user);
 
-        fs.writeFileSync(file, rawData);
+        this.writeToFile(parsedData);
     }
 
     /**
@@ -68,27 +74,27 @@ class Users {
      * @param {User} newUser
      */
     modifyUser(id, newUser) {
-        let rawData = this.getAllUsers();
-        let index = this.getIndexById(id, rawData);
+        let parsedData = this.getAllUsers();
+        let index = this.getIndexById(id, parsedData);
 
-        for (let property in rawData[index]) {
+        for (let property in parsedData[index]) {
             if (newUser[property] == undefined) continue;
-            rawData[index][property] = newUser[property];
+            parsedData[index][property] = newUser[property];
         }
 
-        fs.writeFileSync(file, rawData);
+        this.writeToFile(parsedData);
     }
 
     /**
      * @param {Number} id
      */
     deleteUser(id) {
-        let rawData = this.getAllUsers();
-        const index = this.getIndexById(id, rawData);
+        let parsedData = this.getAllUsers();
+        const index = this.getIndexById(id, parsedData);
 
-        rawData.splice(index, 1);
+        parsedData.splice(index, 1);
 
-        fs.writeFileSync(file, rawData);
+        this.writeToFile(parsedData);
     }
 }
 
