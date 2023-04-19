@@ -1,4 +1,6 @@
 var express = require("express");
+const Users = require("../data/datalayer.js");
+let user = new Users();
 var app = express();
 
 module.exports = function apiServer(port) {
@@ -12,7 +14,7 @@ module.exports = function apiServer(port) {
     app.use(express.json());
 
     //Allow cross app communication
-    app.use(function (_req, res, next) {
+    app.use((_req, res, next) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
         res.header(
@@ -22,11 +24,23 @@ module.exports = function apiServer(port) {
         next();
     });
 
-    app.get("./test", function (_req, res) {
+    app.get("/test", (_req, res) => {
         res.json({ Bajs: ["Jepp"] });
     });
 
-    app.listen(port, function () {
+    app.get("/api/users", (_req, res) => {
+        const parsedData = user.getAllUsers();
+        res.json(parsedData);
+    });
+
+    app.get("/api/user", (req, res) => {
+        const id = req.query.id;
+        const rawData = user.getAllUsers();
+        const index = user.getIndexById(id, rawData);
+        res.json(rawData[index]);
+    });
+
+    app.listen(port, () => {
         console.log(`Server listening on port ${port}`);
     });
 };
