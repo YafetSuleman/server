@@ -23,15 +23,24 @@ module.exports = function apiServer(port) {
         res.json(parsedData);
     });
 
-    app.get("/api/user", (req, res) => {
-        const id = req.query.id;
+    app.post("/api/addUser", (req, res) => {
+        User.addUser(req.body);
+    });
+
+    app.post("/api/modifyUser/:id", (req, _res) => {
+        const id = req.params.id;
+        User.modifyUser(id, req.body);
+    });
+
+    app.get("/api/user/:id", (req, res) => {
+        const id = req.params.id;
         const parsedData = User.getAllUsers();
         const index = User.getIndexById(id, parsedData);
         res.json(parsedData[index]);
     });
 
-    app.delete("/api/deleteUser", (req, _res) => {
-        const id = req.query.id;
+    app.delete("/api/deleteUser/:id", (req, _res) => {
+        const id = req.params.id;
         User.deleteUser(id);
     });
 

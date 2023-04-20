@@ -53,18 +53,24 @@ class Users {
      */
     getNewId() {
         const parsedData = this.getAllUsers();
-        return parsedData[length - 1].id + 1;
+        return parsedData[parsedData.length - 1].id + 1;
     }
 
     /**
      * @param {User} user
      */
     addUser(user) {
-        user.id = getNewId();
-        user.created_at = new Date().toISOString();
+        /**
+         * Convert to array to preserve order
+         * of proprties in the .json file
+         */
+        const userArray = Object.entries(user);
+        userArray.unshift(["id", this.getNewId()]);
+        userArray.splice(5, 0, ["created_at", new Date().toISOString()]);
+        const completeUser = Object.fromEntries(userArray);
 
-        let parsedData = this.getAllUsers();
-        parsedData.push(user);
+        const parsedData = this.getAllUsers();
+        parsedData.push(completeUser);
 
         this.writeToFile(parsedData);
     }
@@ -74,8 +80,8 @@ class Users {
      * @param {User} newUser
      */
     modifyUser(id, newUser) {
-        let parsedData = this.getAllUsers();
-        let index = this.getIndexById(id, parsedData);
+        const parsedData = this.getAllUsers();
+        const index = this.getIndexById(id, parsedData);
 
         for (let property in parsedData[index]) {
             if (newUser[property] == undefined) continue;
@@ -89,7 +95,7 @@ class Users {
      * @param {Number} id
      */
     deleteUser(id) {
-        let parsedData = this.getAllUsers();
+        const parsedData = this.getAllUsers();
         const index = this.getIndexById(id, parsedData);
 
         parsedData.splice(index, 1);
