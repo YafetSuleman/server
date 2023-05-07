@@ -18,12 +18,19 @@ module.exports = function apiServer(port) {
         next();
     });
 
-    app.get("/api/users", (_req, res) => {
+    app.get("/api/users", (req, res) => {
         const parsedData = User.getAllUsers();
-        res.json(parsedData);
+        const nrUsers = req.query.size;
+        const page = req.query.page;
+        const offset = (page - 1) * nrUsers;
+        console.log(
+            `page: ${page} - nrUsers: ${nrUsers} - offset ${offset}\n-------------`
+        );
+        console.log(parsedData.slice(offset, offset + nrUsers));
+        res.json(parsedData.slice(offset, offset + nrUsers));
     });
 
-    app.post("/api/addUser", (req, res) => {
+    app.post("/api/addUser", (req, _res) => {
         User.addUser(req.body);
     });
 
