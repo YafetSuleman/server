@@ -41,7 +41,6 @@ class Users {
         });
 
         if (index == -1) {
-            console.log("Customer not found");
             return;
         }
 
