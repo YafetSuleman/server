@@ -19,15 +19,21 @@ module.exports = function apiServer(port) {
     });
 
     app.get("/api/users", (req, res) => {
+        //Calculate users to show
         const parsedData = User.getAllUsers();
-        const nrUsers = req.query.size;
-        const page = req.query.page;
-        const offset = (page - 1) * nrUsers;
-        console.log(
-            `page: ${page} - nrUsers: ${nrUsers} - offset ${offset}\n-------------`
-        );
-        console.log(parsedData.slice(offset, offset + nrUsers));
-        res.json(parsedData.slice(offset, offset + nrUsers));
+        const usersPerPage = Number(req.query.size);
+        const currentPage = Number(req.query.page);
+        const offset = (currentPage - 1) * usersPerPage;
+
+        //Final page
+        const maxPage = Math.ceil(parsedData.length / usersPerPage);
+
+        const response = {
+            users: parsedData.slice(offset, offset + usersPerPage),
+            maxPage: maxPage,
+        };
+
+        res.json(response);
     });
 
     app.post("/api/addUser", (req, _res) => {
